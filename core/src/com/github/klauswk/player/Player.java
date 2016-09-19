@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.github.klauswk.drawable.Moveable;
+import com.badlogic.gdx.math.Vector2;
 
-public class Player implements Moveable , Colliable{
+public class Player implements Moveable<Vector2> , Colliable{
 	public static final int HEROICIMA = 3;
 
 	public static final int HEROIBAIXO = 0;
@@ -36,6 +37,7 @@ public class Player implements Moveable , Colliable{
 		}
 
 		playerBounds = new Rectangle(posx, posy, 16,16);
+		position = new Vector2(posx,posy);
 		animation = new Animation(sprites, 1);
 	}
 
@@ -128,6 +130,15 @@ public class Player implements Moveable , Colliable{
 
 	public void setPosy(int posy) {
 		this.posy = posy;
+	}
+
+	private Vector2 position;
+	
+	@Override
+	public Vector2 getPosition() {
+		position.x = posx;
+		position.y = posy;
+		return position;
 	}
 
 }

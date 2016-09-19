@@ -7,14 +7,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.github.klauswk.drawable.Drawable;
 import com.github.klauswk.drawable.Moveable;
 import com.github.klauswk.player.Colliable;
+import com.github.klauswk.player.Direction;
 import com.github.klauswk.player.MapDetection;
 
-public class Box implements Moveable , Colliable {
+public class Box implements Moveable<Vector2> , Colliable {
 
-	private Vector2 position;
+	private Vector2 pos;
 	private Texture texture;
 	private Rectangle rectangle;
-	private MapDetection detection;
+	private MapDetection mapDetection;
 
 	public Box(int x, int y) {
 		this(new Vector2(x, y));
@@ -31,15 +32,16 @@ public class Box implements Moveable , Colliable {
 		}
 		
 		rectangle = new Rectangle(position.x,position.y,texture.getWidth(),texture.getHeight());
-		this.position = position;
+		this.pos = position;
 	}
 	
 	public void setPosition(Vector2 position) {
-		this.position = position;
+		this.pos = position;
 	}
 	
+	@Override
 	public Vector2 getPosition() {
-		return position;
+		return pos;
 	}
 	
 	private boolean overlaps;
@@ -47,23 +49,37 @@ public class Box implements Moveable , Colliable {
 	@Override
 	public boolean isColliding(Rectangle rectangle) {
 		overlaps = this.rectangle.overlaps(rectangle);
-		//System.out.println(this.rectangle.x + " : " + this.rectangle.y);
-		//System.out.println(rectangle.x + " : " + rectangle.y);
-		if(overlaps){
-			System.out.println("Colliding with " + getClass().getSimpleName());
-		}
 		return overlaps;
 	}
 	
 	@Override
 	public void move(int posx, int posy) {
-		
+		if (posx < 0) {
+			if (mapDetection.checkIfCanMove(Direction.LEFT)) {
+				this.pos.x += posx;
+			}
+		} else if (posx > 0) {
+			if (mapDetection.checkIfCanMove(Direction.RIGHT)) {
+				this.pos.x += posx;
+			}
+		}
+		if (posy < 0) {
+			if (mapDetection.checkIfCanMove(Direction.DOWN)) {
+				this.pos.y += posy;
+			}
+		} else if (posy > 0) {
+			if (mapDetection.checkIfCanMove(Direction.UP)) {
+				this.pos.y += posy;
+			}
+		}
+		rectangle.setX(this.pos.x);
+		rectangle.setY(this.pos.y);
 	}
 
 	@Override
 	public void render(SpriteBatch sb) {
 		sb.begin();
-		sb.draw(texture,position.x,position.y);
+		sb.draw(texture,pos.x,pos.y);
 		sb.end();
 	}
 

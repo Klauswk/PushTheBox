@@ -17,12 +17,12 @@ import com.github.klauswk.drawable.Drawable;
 import com.github.klauswk.object.Box;
 import com.github.klauswk.object.BoxService;
 import com.github.klauswk.player.Colliable;
+import com.github.klauswk.player.MapDetection;
 import com.github.klauswk.player.MapDetectionImpl;
 import com.github.klauswk.player.Player;
 
 public class PushTheBox extends ApplicationAdapter {
 
-	
 	private SpriteBatch batch;
 	private TiledMap tilemap;
 	private TiledMapRenderer tilemaprenderer;
@@ -32,6 +32,8 @@ public class PushTheBox extends ApplicationAdapter {
 	private ArrayList<Colliable> colliables = new ArrayList<Colliable>();
 	private ArrayList<Drawable> drawables = new ArrayList<Drawable>();
 	private BoxService boxService;
+	private MapDetection playerDetection;
+	private MapDetection boxDetection;
 
 	@Override
 	public void create() {
@@ -49,8 +51,10 @@ public class PushTheBox extends ApplicationAdapter {
 		boxService = new BoxService(tileMapTileLayer);
 		
 		player = new Player((int) camera.viewportWidth, (int) camera.viewportHeight);
-		player.setMapDetection(new MapDetectionImpl(player, tileMapTileLayer));
+		playerDetection = new MapDetectionImpl(player, tileMapTileLayer);
+		player.setMapDetection(playerDetection);
 		Box box = boxService.getInstance();
+		boxDetection = new MapDetectionImpl(player, tileMapTileLayer);
 		batch.setProjectionMatrix(camera.combined);
 		
 		colliables.add(box);

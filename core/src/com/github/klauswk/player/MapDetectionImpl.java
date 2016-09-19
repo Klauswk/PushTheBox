@@ -1,23 +1,25 @@
 package com.github.klauswk.player;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Vector2;
+import com.github.klauswk.drawable.Moveable;
 
 public class MapDetectionImpl implements MapDetection {
 
-	private Player player;
+	private Moveable<Vector2> moveable;
 	private TiledMapTileLayer tileMapTileLayer;
 
-	public MapDetectionImpl(Player player, TiledMapTileLayer tileMapTileLayer) {
+	public MapDetectionImpl(Moveable<Vector2> moveable, TiledMapTileLayer tileMapTileLayer) {
 		super();
-		this.player = player;
+		this.moveable = moveable;
 		this.tileMapTileLayer = tileMapTileLayer;
 	}
 
 	@Override
 	public boolean checkIfCanMove(Direction direction) {
 
-		int posx = player.getPosx();
-		int posy = player.getPosy();
+		int posx = (int)moveable.getPosition().x;
+		int posy = (int)moveable.getPosition().y;
 
 		switch (direction) {
 
