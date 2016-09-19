@@ -3,10 +3,10 @@ package com.github.klauswk.player;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.math.Rectangle;
 import com.github.klauswk.drawable.Moveable;
 
-public class Player implements Moveable{
+public class Player implements Moveable , Colliable{
 	public static final int HEROICIMA = 3;
 
 	public static final int HEROIBAIXO = 0;
@@ -18,26 +18,33 @@ public class Player implements Moveable{
 	private Texture heroi;
 	public static int spriteatual = 0;
 	private Animation animation;
-	private int widht, height;
 	private int posx, posy;
-	private Body body;
+	private Rectangle playerBounds;
+	private MapDetection mapDetection;
 
 	public Player(int width, int height) {
-		this.widht = width;
-		this.height = height;
 		heroi = new Texture("trainer.png");
-		
+
 		TextureRegion[][] sprites = TextureRegion.split(heroi, 16, 16);
 		posx = width / 2;
 		posy = height / 2;
-		while (posx % 32 != 0) {
+		while (posx % 16 != 0) {
 			posx--;
 		}
-		while (posy % 32 != 0) {
+		while (posy % 16 != 0) {
 			posy--;
 		}
-		
-		animation = new Animation(sprites,1);
+
+		playerBounds = new Rectangle(posx, posy, 16,16);
+		animation = new Animation(sprites, 1);
+	}
+
+	public Rectangle getPlayerBounds() {
+		return playerBounds;
+	}
+
+	public void setPlayerBounds(Rectangle playerBounds) {
+		this.playerBounds = playerBounds;
 	}
 
 	@Override
@@ -46,27 +53,38 @@ public class Player implements Moveable{
 	}
 
 	@Override
-	public void move(int posx , int posy){
-		if(posx < 0){
-			if(!(this.posx == 0)){
+	public void move(int posx, int posy) {
+		if (posx < 0) {
+			if (mapDetection.checkIfCanMove(Direction.LEFT)) {
 				this.posx += posx;
 			}
-		}else if(posx > 0){
-			if(!(this.posx == 256)){
+		} else if (posx > 0) {
+			if (mapDetection.checkIfCanMove(Direction.RIGHT)) {
 				this.posx += posx;
 			}
 		}
-		this.posy += posy;
-		if(posx > 0){
+		if (posy < 0) {
+			if (mapDetection.checkIfCanMove(Direction.DOWN)) {
+				this.posy += posy;
+			}
+		} else if (posy > 0) {
+			if (mapDetection.checkIfCanMove(Direction.UP)) {
+				this.posy += posy;
+			}
+		}
+		playerBounds.setX(this.posx);
+		playerBounds.setY(this.posy);
+		
+		if (posx > 0) {
 			spriteatual = HEROIDIREITA;
 			return;
-		}else if(posx < 0){
+		} else if (posx < 0) {
 			spriteatual = HEROIESQUERDA;
 			return;
-		}else if(posy > 0){
+		} else if (posy > 0) {
 			spriteatual = HEROICIMA;
 			return;
-		}else{
+		} else {
 			spriteatual = HEROIBAIXO;
 			return;
 		}
@@ -74,9 +92,42 @@ public class Player implements Moveable{
 
 	@Override
 	public void render(SpriteBatch sb) {
-		update(1/30f);
+		update(1 / 30f);
 		sb.begin();
 		sb.draw(animation.getFrame(spriteatual), posx, posy);
 		sb.end();
 	}
+	
+	@Override
+	public boolean isColliding(Rectangle rectangle) {
+		if(rectangle == null){
+			return false;
+		}
+		return playerBounds.overlaps(rectangle);
+	}
+
+	public MapDetection getMapDetection() {
+		return mapDetection;
+	}
+
+	public void setMapDetection(MapDetection mapDetection) {
+		this.mapDetection = mapDetection;
+	}
+
+	public int getPosx() {
+		return posx;
+	}
+
+	public void setPosx(int posx) {
+		this.posx = posx;
+	}
+
+	public int getPosy() {
+		return posy;
+	}
+
+	public void setPosy(int posy) {
+		this.posy = posy;
+	}
+
 }

@@ -1,30 +1,37 @@
 package com.github.klauswk;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSets;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.github.klauswk.drawable.Drawable;
 import com.github.klauswk.object.Box;
+import com.github.klauswk.object.BoxService;
+import com.github.klauswk.player.Colliable;
+import com.github.klauswk.player.MapDetectionImpl;
 import com.github.klauswk.player.Player;
 
 public class PushTheBox extends ApplicationAdapter {
-	SpriteBatch batch;
 
+	
+	private SpriteBatch batch;
 	private TiledMap tilemap;
 	private TiledMapRenderer tilemaprenderer;
 	private OrthographicCamera camera;
+	private TiledMapTileLayer tileMapTileLayer;
 	private Player player;
-	private Box box;
+	private ArrayList<Colliable> colliables = new ArrayList<Colliable>();
+	private ArrayList<Drawable> drawables = new ArrayList<Drawable>();
+	private BoxService boxService;
 
 	@Override
 	public void create() {
@@ -37,11 +44,18 @@ public class PushTheBox extends ApplicationAdapter {
 		tilemaprenderer = new OrthogonalTiledMapRenderer(tilemap);
 		tilemaprenderer.setView(camera);
 
-		System.out.println(tilemap.getLayers().get(0).getProperties().getKeys());
+		tileMapTileLayer = (TiledMapTileLayer) tilemap.getLayers().get(0);
+		
+		boxService = new BoxService(tileMapTileLayer);
 		
 		player = new Player((int) camera.viewportWidth, (int) camera.viewportHeight);
-		box = new Box(128, 128);
+		player.setMapDetection(new MapDetectionImpl(player, tileMapTileLayer));
+		Box box = boxService.getInstance();
 		batch.setProjectionMatrix(camera.combined);
+		
+		colliables.add(box);
+		drawables.add(box);
+		drawables.add(player);
 	}
 
 	@Override
@@ -61,9 +75,9 @@ public class PushTheBox extends ApplicationAdapter {
 		} else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			player.move(0, -16);
 		}
-
-		box.render(batch);
-		player.render(batch);
+		
+		for(Colliable colliable : colliables){colliable.isColliding(player.getPlayerBounds());}
+		for(Drawable draw : drawables){draw.render(batch);}
 	}
 
 	@Override
