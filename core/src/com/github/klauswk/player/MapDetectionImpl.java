@@ -18,8 +18,8 @@ public class MapDetectionImpl implements MapDetection {
 	@Override
 	public boolean checkIfCanMove(Direction direction) {
 
-		int posx = (int)moveable.getPosition().x;
-		int posy = (int)moveable.getPosition().y;
+		int posx = 12;
+		int posy = 12;
 
 		switch (direction) {
 

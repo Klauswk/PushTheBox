@@ -39,7 +39,6 @@ public class Box implements Moveable<Vector2> , Colliable {
 		this.pos = position;
 	}
 	
-	@Override
 	public Vector2 getPosition() {
 		return pos;
 	}
@@ -86,5 +85,13 @@ public class Box implements Moveable<Vector2> , Colliable {
 	@Override
 	public void update(float dt) {
 		
+	}
+	
+	public void setMapDetection(MapDetection mapDetection) {
+		this.mapDetection = mapDetection;
+	}
+	
+	public MapDetection getMapDetection() {
+		return mapDetection;
 	}
 }

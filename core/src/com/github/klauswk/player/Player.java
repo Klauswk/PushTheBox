@@ -19,25 +19,26 @@ public class Player implements Moveable<Vector2> , Colliable{
 	private Texture heroi;
 	public static int spriteatual = 0;
 	private Animation animation;
-	private int posx, posy;
+	private Vector2 position;
 	private Rectangle playerBounds;
 	private MapDetection mapDetection;
 
 	public Player(int width, int height) {
 		heroi = new Texture("trainer.png");
 
+		position = new Vector2();
+		
 		TextureRegion[][] sprites = TextureRegion.split(heroi, 16, 16);
-		posx = width / 2;
-		posy = height / 2;
-		while (posx % 16 != 0) {
-			posx--;
+		position.x = width / 2;
+		position.y = height / 2;
+		while (position.x % 16 != 0) {
+			position.x--;
 		}
-		while (posy % 16 != 0) {
-			posy--;
+		while (position.y % 16 != 0) {
+			position.y--;
 		}
 
-		playerBounds = new Rectangle(posx, posy, 16,16);
-		position = new Vector2(posx,posy);
+		playerBounds = new Rectangle(position.x, position.y, 16,16);
 		animation = new Animation(sprites, 1);
 	}
 
@@ -58,24 +59,24 @@ public class Player implements Moveable<Vector2> , Colliable{
 	public void move(int posx, int posy) {
 		if (posx < 0) {
 			if (mapDetection.checkIfCanMove(Direction.LEFT)) {
-				this.posx += posx;
+				this.position.x += posx;
 			}
 		} else if (posx > 0) {
 			if (mapDetection.checkIfCanMove(Direction.RIGHT)) {
-				this.posx += posx;
+				this.position.x += posx;
 			}
 		}
 		if (posy < 0) {
 			if (mapDetection.checkIfCanMove(Direction.DOWN)) {
-				this.posy += posy;
+				this.position.y += posy;
 			}
 		} else if (posy > 0) {
 			if (mapDetection.checkIfCanMove(Direction.UP)) {
-				this.posy += posy;
+				this.position.y += posy;
 			}
 		}
-		playerBounds.setX(this.posx);
-		playerBounds.setY(this.posy);
+		playerBounds.setX(this.position.x);
+		playerBounds.setY(this.position.y);
 		
 		if (posx > 0) {
 			spriteatual = HEROIDIREITA;
@@ -96,7 +97,7 @@ public class Player implements Moveable<Vector2> , Colliable{
 	public void render(SpriteBatch sb) {
 		update(1 / 30f);
 		sb.begin();
-		sb.draw(animation.getFrame(spriteatual), posx, posy);
+		sb.draw(animation.getFrame(spriteatual), position.x, position.y);
 		sb.end();
 	}
 	
@@ -115,29 +116,12 @@ public class Player implements Moveable<Vector2> , Colliable{
 	public void setMapDetection(MapDetection mapDetection) {
 		this.mapDetection = mapDetection;
 	}
-
-	public int getPosx() {
-		return posx;
-	}
-
-	public void setPosx(int posx) {
-		this.posx = posx;
-	}
-
-	public int getPosy() {
-		return posy;
-	}
-
-	public void setPosy(int posy) {
-		this.posy = posy;
-	}
-
-	private Vector2 position;
 	
-	@Override
+	public void setPosition(Vector2 position) {
+		this.position = position;
+	}
+	
 	public Vector2 getPosition() {
-		position.x = posx;
-		position.y = posy;
 		return position;
 	}
 

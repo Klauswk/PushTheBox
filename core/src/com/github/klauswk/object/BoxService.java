@@ -31,6 +31,7 @@ public class BoxService implements BoxFactory, Placeable<Box>{
 		Box box = new Box(vec);
 		checkIfCanBePlaced(box);
 		translate(box);
+		box.setMapDetection(new MapDetectionBox(this.tiledMapTileLayer, box.getPosition()));
 		return box;
 	}
 
