@@ -87,6 +87,10 @@ public class Box implements Moveable<Vector2> , Colliable {
 		
 	}
 	
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+	
 	public void setMapDetection(MapDetection mapDetection) {
 		this.mapDetection = mapDetection;
 	}
